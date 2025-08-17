@@ -3,31 +3,27 @@ import React, { useEffect, useRef, useState } from 'react'
 import * as tf from '@tensorflow/tfjs'
 import { PredictionDisplay } from '@/components/PredictionDisplay';
 import { toast } from '@/components/toast';
+import { useTensorFlow } from '@/hooks/useTensorFlow';
+import { Button } from '@/components/ui/button';
+import { CANVAS_SIZE, constraints, facingMode as baseFacingMode } from '@/utils/contants'
+import { processImageToGrayscale } from '@/utils/processImageToGrayscale';
 
 
 function ImageClassificationPage() {
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const hiddenCanvasRef = useRef<HTMLCanvasElement | null>(null);
-    const [model, setModel] = useState<tf.LayersModel | null>(null);
     const [prediction, setPrediction] = useState<string>('');
-    const [facingMode, setFacingMode] = useState('user');
+    const [facingMode, setFacingMode] = useState(baseFacingMode);
     const [stream, setStream] = useState<MediaStream | null>(null);
-    const [loading, setLoading] = useState(true);
     const [confidence, setConfidence] = useState<number | null>(null);
 
-    const CANVAS_SIZE = 600
+    const { model, loading } = useTensorFlow('/model.json');
+
 
     const startCamera = async () => {
         try {
-            const constraints = {
-                audio: false,
-                video: {
-                    facingMode: facingMode,
-                    width: CANVAS_SIZE,
-                    height: CANVAS_SIZE
-                }
-            };
+
 
             const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
 
@@ -64,6 +60,13 @@ function ImageClassificationPage() {
             setTimeout(processCamera, 20);
         }
     };
+
+    const stopCamera = () => {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            setStream(null);
+        }
+    }
 
     const resampleCanvas = (sourceCanvas: HTMLCanvasElement, width: number, height: number, targetCanvas: HTMLCanvasElement) => {
         const targetCtx = targetCanvas.getContext('2d') as CanvasRenderingContext2D;
@@ -118,28 +121,7 @@ function ImageClassificationPage() {
                 // Resize to 100x100 for model input
                 resampleCanvas(canvasRef.current, 100, 100, hiddenCanvasRef.current);
 
-                // Get image data
-                const ctx = hiddenCanvasRef.current.getContext('2d') as CanvasRenderingContext2D;
-                const imageData = ctx.getImageData(0, 0, 100, 100);
-
-                // Process image to grayscale
-                const arr = [];
-                const arr100 = [];
-
-                for (let p = 0; p < imageData.data.length; p += 4) {
-                    const red = imageData.data[p] / 255;
-                    const green = imageData.data[p + 1] / 255;
-                    const blue = imageData.data[p + 2] / 255;
-
-                    const gray = (red + green + blue) / 3;
-
-                    arr100.push([gray]);
-                    if (arr100.length == 100) {
-                        arr.push([...arr100]);
-                        arr100.length = 0;
-                    }
-                }
-
+                const arr = processImageToGrayscale(hiddenCanvasRef.current);
 
                 // Create tensor and make prediction
                 const tensor = tf.tensor4d([arr], [1, 100, 100, 1]);
@@ -163,29 +145,6 @@ function ImageClassificationPage() {
         setTimeout(predict, 150);
     };
 
-
-    useEffect(() => {
-        const loadModel = async () => {
-            try {
-                const loadedModel = await tf.loadLayersModel(`/model.json`) as tf.LayersModel;
-                setModel(loadedModel);
-                setLoading(false);
-
-                toast.success({
-                    title: "Model Loaded",
-                    description: "The model has been successfully loaded.",
-                });
-            } catch {
-                toast.error({
-                    title: "Model Loading Error",
-                    description: "Error occurred while loading the model. Please try again.",
-                });
-                setLoading(false);
-            }
-        };
-
-        loadModel();
-    }, []);
 
     useEffect(() => {
 
@@ -238,8 +197,8 @@ function ImageClassificationPage() {
                                 <video ref={videoRef} autoPlay playsInline className="hidden" />
 
                                 {/* Change camera button */}
-                                <div className="flex justify-center">
-                                    <button
+                                <div className="flex justify-center gap-5">
+                                    <Button
                                         onClick={changeCamera}
                                         className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-pink-500/25 border border-pink-500/50"
                                     >
@@ -252,7 +211,19 @@ function ImageClassificationPage() {
                                             />
                                         </svg>
                                         Change Camera
-                                    </button>
+                                    </Button>
+
+                                    {stream && (
+                                        <Button onClick={stopCamera} className='inline-flex items-center px-4 py-2 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-pink-500/25 border border-pink-500/50'>
+                                            Stop Camera
+                                        </Button>
+                                    )}
+
+                                    {!stream && (
+                                        <Button onClick={startCamera} className='inline-flex items-center px-4 py-2 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-pink-500/25 border border-pink-500/50'>
+                                            Start Camera
+                                        </Button>
+                                    )}
                                 </div>
                                 <div className="relative">
                                     <div className="bg-black/60 rounded-xl p-4 border-2 border-dashed border-cyan-400/50">
