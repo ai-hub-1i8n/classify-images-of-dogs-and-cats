@@ -37,22 +37,20 @@ export function PredictionDisplay({
     }
 
     return (
-        <>
-            <div className="space-y-4">
-                <div className={`text-6xl md:text-7xl lg:text-8xl font-bold  animate-pulse`}>
-                    {getEmoji(prediction)} <span className={`bg-gradient-to-r ${getColor(prediction)} bg-clip-text text-transparent`}>{prediction}</span>
-                </div>
-                <div className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-500/20 text-green-300 border border-green-500/50">
-                    <div className="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></div>
-                    Detected
-                </div>
-                {confidence && (
-                    <div className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-500/20 text-purple-300 border border-purple-500/50">
-                        <div className="w-2 h-2 bg-purple-400 rounded-full mr-2 animate-pulse"></div>
-                        Confidence: {(confidence * 100).toFixed(1)}%
-                    </div>
-                )}
+        <div className="flex flex-col space-y-4 p-4 items-center">
+            <div className={`text-6xl md:text-7xl lg:text-8xl font-bold  animate-pulse`}>
+                {getEmoji(prediction)} <span className={`bg-linear-to-r ${getColor(prediction)} bg-clip-text text-transparent`}>{prediction}</span>
             </div>
-        </>
+            <div className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-500/20 text-green-300 border border-green-500/50">
+                <div className="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></div>
+                Detected
+            </div>
+            {confidence && (
+                <div className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-500/20 text-purple-300 border border-purple-500/50">
+                    <div className="w-2 h-2 bg-purple-400 rounded-full mr-2 animate-pulse"></div>
+                    Confidence: {(confidence * 100).toFixed(1)}%
+                </div>
+            )}
+        </div>
     );
 }

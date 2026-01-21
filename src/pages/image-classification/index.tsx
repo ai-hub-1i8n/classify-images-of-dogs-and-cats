@@ -5,11 +5,11 @@ import { PredictionDisplay } from '@/components/PredictionDisplay';
 import { toast } from '@/components/toast';
 import { useTensorFlow } from '@/hooks/useTensorFlow';
 import { Button } from '@/components/ui/button';
-import { CANVAS_SIZE, constraints, facingMode as baseFacingMode } from '@/utils/contants'
+import { CANVAS_SIZE, constraints, facingMode as baseFacingMode } from '@/utils/constants';
 import { processImageToGrayscale } from '@/utils/processImageToGrayscale';
 
 
-function ImageClassificationPage() {
+export function ImageClassificationPage() {
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const hiddenCanvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -23,8 +23,6 @@ function ImageClassificationPage() {
 
     const startCamera = async () => {
         try {
-
-
             const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
 
             if (videoRef.current) {
@@ -165,25 +163,10 @@ function ImageClassificationPage() {
     }, [loading, model]);
 
     return (
-        <main className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 dark:from-black dark:via-purple-950 dark:to-cyan-950">
-            <div className="px-4 py-8 text-center">
-                <div className="max-w-4xl mx-auto">
-                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 drop-shadow-lg">
-                        🐕 Dogs and Cats 🐱
-                    </h1>
-                    <div className="max-w-2xl mx-auto">
-                        <p className="text-lg md:text-xl text-cyan-200 dark:text-cyan-300 leading-relaxed">
-                            Intelligent image classification using your webcam with
-                            <span className="font-semibold text-pink-400 dark:text-pink-300"> TensorFlow.js</span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            {/* Improved main content */}
-            <div className="container mx-auto px-4 pb-12">
-                <div className="flex justify-center">
-                    <div className="w-full max-w-md lg:max-w-lg">
+        <main className="">
+            <section className="">
+                <div className="flex md:flex-row flex-col justify-center">
+                    <div className="">
                         {loading ? (
                             <div className="flex flex-col items-center justify-center p-12 bg-black/40 dark:bg-black/60 backdrop-blur-sm rounded-2xl shadow-2xl border border-cyan-500/30">
                                 <div className="animate-spin rounded-full h-16 w-16 border-4 border-pink-500 border-t-transparent mb-4"></div>
@@ -192,70 +175,65 @@ function ImageClassificationPage() {
                                 </p>
                             </div>
                         ) : (
-                            <div className="bg-black/40 dark:bg-black/60 backdrop-blur-sm rounded-2xl shadow-2xl border border-cyan-500/30 p-6 space-y-6">
+                            <div className="bg-black/90 dark:bg-black/60 backdrop-blur-sm rounded-2xl shadow-2xl border border-cyan-500/30 p-6 space-y-6">
                                 {/* Hidden video element */}
                                 <video ref={videoRef} autoPlay playsInline className="hidden" />
 
                                 {/* Change camera button */}
-                                <div className="flex justify-center gap-5">
+                                <div className="flex justify-center md:flex-row flex-col gap-5">
                                     <Button
                                         onClick={changeCamera}
-                                        className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-pink-500/25 border border-pink-500/50"
+                                        className="inline-flex items-center px-4 py-2 bg-linear-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-pink-500/25 border border-pink-500/50"
                                     >
-                                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth={2}
-                                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                                            />
-                                        </svg>
                                         Change Camera
                                     </Button>
 
                                     {stream && (
-                                        <Button onClick={stopCamera} className='inline-flex items-center px-4 py-2 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-pink-500/25 border border-pink-500/50'>
+                                        <Button onClick={stopCamera} className='inline-flex items-center px-4 py-2 bg-linear-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-pink-500/25 border border-pink-500/50'>
                                             Stop Camera
                                         </Button>
                                     )}
 
                                     {!stream && (
-                                        <Button onClick={startCamera} className='inline-flex items-center px-4 py-2 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-pink-500/25 border border-pink-500/50'>
+                                        <Button onClick={startCamera} className='inline-flex items-center px-4 py-2 bg-linear-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-pink-500/25 border border-pink-500/50'>
                                             Start Camera
                                         </Button>
                                     )}
                                 </div>
-                                <div className="relative">
-                                    <div className="bg-black/60 rounded-xl p-4 border-2 border-dashed border-cyan-400/50">
-                                        <canvas
-                                            ref={canvasRef}
-                                            width={CANVAS_SIZE}
-                                            height={CANVAS_SIZE}
-                                            className="w-full h-auto max-w-full rounded-lg shadow-inner bg-black border border-purple-500/30"
-                                        />
-                                    </div>
-                                    <div className="absolute inset-4 pointer-events-none">
-                                        <div className="relative w-full h-full">
-                                            <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-cyan-400 opacity-80"></div>
-                                            <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-cyan-400 opacity-80"></div>
-                                            <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-cyan-400 opacity-80"></div>
-                                            <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-cyan-400 opacity-80"></div>
+
+                                <section className="flex md:flex-row flex-col justify-center mt-4 w-full">
+                                    <div className=" relative">
+                                        <div className="bg-black/60 rounded-xl p-4 border-2 border-dashed border-cyan-400/50">
+                                            <canvas
+                                                ref={canvasRef}
+                                                width={CANVAS_SIZE}
+                                                height={CANVAS_SIZE}
+                                                className="w-full h-auto max-w-full rounded-lg shadow-inner bg-black border border-purple-500/30"
+                                            />
+                                        </div>
+                                        <div className="absolute inset-4 pointer-events-none">
+                                            <div className="relative w-full h-full">
+                                                <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-cyan-400 opacity-80"></div>
+                                                <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-cyan-400 opacity-80"></div>
+                                                <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-cyan-400 opacity-80"></div>
+                                                <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-cyan-400 opacity-80"></div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                    <canvas ref={hiddenCanvasRef} width={150} height={150} className="hidden" />
 
-                                <canvas ref={hiddenCanvasRef} width={150} height={150} className="hidden" />
 
-                                <div className="text-center py-6">
-                                    {prediction ? (
-                                        <PredictionDisplay prediction={prediction} loading={loading} confidence={confidence} />
-                                    ) : (
-                                        <div className="text-cyan-300/70 text-lg font-medium py-8">
-                                            Point the camera at a dog or cat to start classification.
-                                        </div>
-                                    )}
+                                    <div className="text-center py-6 flex flex-col items-center justify-center gap-4">
+                                        {prediction ? (
+                                            <PredictionDisplay prediction={prediction} loading={loading} confidence={confidence} />
+                                        ) : (
+                                            <div className="text-cyan-300/70 text-lg font-medium py-8">
+                                                Point the camera at a dog or cat to start classification.
+                                            </div>
+                                        )}
 
-                                </div>
+                                    </div>
+                                </section>
 
                                 <div className="flex justify-center space-x-4 text-sm text-cyan-300/80">
                                     <div className="flex items-center">
@@ -271,12 +249,12 @@ function ImageClassificationPage() {
                         )}
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <div className="px-4 pb-8 md:hidden">
-                <div className="bg-yellow-500/10 border border-yellow-400/30 rounded-lg p-4 max-w-md mx-auto backdrop-blur-sm">
+            <section className="px-4 my-8 md:hidden">
+                <div className="bg-yellow-500/10 border dark:border-yellow-400/30 border-yellow-400/90 rounded-lg p-4 max-w-md mx-auto backdrop-blur-sm">
                     <div className="flex items-start">
-                        <svg className="w-5 h-5 text-yellow-400 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <svg className="w-5 h-5 dark:text-yellow-400 text-yellow-600 mt-0.5 mr-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                             <path
                                 fillRule="evenodd"
                                 d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
@@ -284,18 +262,16 @@ function ImageClassificationPage() {
                             />
                         </svg>
                         <div>
-                            <p className="text-sm text-yellow-300 font-medium">
+                            <p className="text-sm dark:text-yellow-300 text-yellow-600 font-medium">
                                 Tips for Mobile
                             </p>
-                            <p className="text-sm text-yellow-200/80 mt-1">
+                            <p className="text-sm dark:text-yellow-200/80 text-yellow-600 mt-1">
                                 Keep the device steady and ensure good lighting for best results.
                             </p>
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
         </main>
     )
 }
-
-export default ImageClassificationPage
