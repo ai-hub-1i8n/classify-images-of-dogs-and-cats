@@ -6,12 +6,8 @@ import { Cat, DogIcon } from "lucide-react"
 
 import {
     NavigationMenu as NavigationMenuComponent,
-    NavigationMenuContent,
     NavigationMenuItem,
-    NavigationMenuLink,
     NavigationMenuList,
-    NavigationMenuTrigger,
-    navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
 import { ModeToggle } from "../theme/ModeToggle"
 

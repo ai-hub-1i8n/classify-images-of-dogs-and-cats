@@ -9,7 +9,7 @@ import { CANVAS_SIZE, constraints, facingMode as baseFacingMode } from '@/utils/
 import { processImageToGrayscale } from '@/utils/processImageToGrayscale';
 
 
-export function ImageClassificationPage() {
+export default function ImageClassificationPage() {
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const hiddenCanvasRef = useRef<HTMLCanvasElement | null>(null);

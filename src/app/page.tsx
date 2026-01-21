@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { ImageClassificationPage } from '@/pages/image-classification';
+import ImageClassificationPage from '@/pages/ImageClassificationPage';
 
 
 export default function Home() {
